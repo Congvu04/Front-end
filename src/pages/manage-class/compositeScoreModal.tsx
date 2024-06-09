@@ -143,7 +143,7 @@ const CompositeScoreModal: React.FC<Props> = (props) => {
       title: "Thao tác",
       key: "action",
       align: "center",
-      className:`${getInfoCurrentUser?.type == userType.ministry ? 'hidden' : ''}`,
+      className: `${getInfoCurrentUser?.type == userType.ministry ? 'hidden' : ''}`,
       render: (_, record, index) => (
         <Space size="middle">
           <Tooltip placement="topLeft" title='Cập nhật'>
@@ -183,6 +183,7 @@ const CompositeScoreModal: React.FC<Props> = (props) => {
   useEffect(() => {
     if (!!dataStudent && !errorStudent) {
       let dataTalbe: any = dataStudent.data;
+      console.log(dataStudent)
       dataTalbe?.map((obj: any, index: number) => {
         obj.key = index + 1;
         return obj

@@ -22,6 +22,7 @@ import timezone from 'dayjs/plugin/timezone';
 import CompositeScoreModal from "./compositeScoreModal";
 import { useSelector } from "react-redux";
 import { userType } from "@/common/enum";
+import axios from "axios";
 // import CompositeScoreModal from "./compositeScoreModal";
 
 dayjs.extend(utc);
@@ -137,6 +138,8 @@ export default function ManageClass(props: any) {
     mutate,
   } = useSWR((getInfoCurrentUser.type == userType.admin || getInfoCurrentUser.type == userType.ministry) ? classSV().list : '', fetcher_$GET);
 
+
+
   const {
     data: listResbyteacher,
     error: errorbyteacher,
@@ -170,7 +173,7 @@ export default function ManageClass(props: any) {
     if (errorTeacher) {
       notificationError(`${props.errorTeacher}`);
     }
-  }, [error, listRes, listTeacher, errorTeacher, listResbyteacher, errorbyteacher]);
+  }, [error, listTeacher, errorTeacher, listResbyteacher, errorbyteacher]);
 
   // tạo mới
   const handleCreateManageClassModalClose = (res: any) => {
@@ -329,28 +332,32 @@ export default function ManageClass(props: any) {
   const optionSemester = [
     {
       id: 1,
-      value: 'semeter-1',
+      value: '1',
       label: 'Học kì 1'
     },
     {
       id: 2,
-      value: 'semeter-2',
+      value: '2',
       label: 'Học kì 2'
     }
   ]
 
-  const [year, setYear] = useState();
+  const [year, setYear] = useState('');
 
   const optionYears = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
 
-  const handleFilter = () => {
-    console.log(`${semeter} ${year}`)
-    if (semeter === '' || year === null) {
-      notificationError("Chưa chọn đủ!")
-    } else (
-      notificationSuccess(`${semeter} của ${year}`)
-    )
 
+
+
+  const handleListFilter = async () => {
+    try {
+      const parameter = year.toString() + semeter.toString()
+      const respon = await axios.get(`https://localhost:7032/api/class/listFilter?semester=${parameter}`)
+      console.log(respon.data.data)
+      setListTable(respon.data.data)
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return (
@@ -386,7 +393,7 @@ export default function ManageClass(props: any) {
           <Button
             type="primary"
             className={`bg-blue-500 me-2 ${(getInfoCurrentUser?.type == userType.teacher || getInfoCurrentUser?.type == userType.ministry) ? 'hidden' : ''}`}
-            onClick={() => handleFilter()}
+            onClick={() => handleListFilter()}
 
           >
             Lọc
