@@ -73,7 +73,9 @@ const Admin: React.FC = () => {
   return (
     <Layout id='components-layout-demo-custom-trigger' className='h-screen'>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
+        <div className="logo">
+          <img src="/assets/images/logo_utehy.jpg" alt="Logo UTEHY" style={{ width: '30px', height: '30px', objectFit: 'cover' }} />
+        </div>
         <Menu
           theme="dark"
           mode="inline"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Space, Table, Tooltip, Upload } from "antd";
+import { Button, Select, Space, Table, Tooltip, Upload } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { CheckCircleOutlined, CheckOutlined, DeleteOutlined, EditOutlined, ProfileOutlined, TableOutlined, UploadOutlined } from "@ant-design/icons";
 import useSWR from "swr";
@@ -322,21 +322,79 @@ export default function ManageClass(props: any) {
     (!selectClassData) && notificationError("Yêu cầu chọn lớp cần thêm sinh viên");
   }
 
+
+  /*** Form Data and Handle Data for Filter Class*/
+  const [semeter, setSemeter] = useState('');
+
+  const optionSemester = [
+    {
+      id: 1,
+      value: 'semeter-1',
+      label: 'Học kì 1'
+    },
+    {
+      id: 2,
+      value: 'semeter-2',
+      label: 'Học kì 2'
+    }
+  ]
+
+  const [year, setYear] = useState();
+
+  const optionYears = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+
+  const handleFilter = () => {
+    console.log(`${semeter} ${year}`)
+    if (semeter === '' || year === null) {
+      notificationError("Chưa chọn đủ!")
+    } else (
+      notificationSuccess(`${semeter} của ${year}`)
+    )
+
+  }
+
   return (
     <>
-      <Button
-        type="primary"
-        className={`bg-blue-500 me-2 ${(getInfoCurrentUser?.type == userType.teacher || getInfoCurrentUser?.type == userType.ministry) ? 'hidden' : ''}`}
-        onClick={() => handleOpenCreateManageClassModal()}
+      <div className="grid grid-cols-5 gap-4">
+        <div className="col-start-1 col-end-3 ...">
+          <Button
+            type="primary"
+            className={`bg-blue-500 me-2 ${(getInfoCurrentUser?.type == userType.teacher || getInfoCurrentUser?.type == userType.ministry) ? 'hidden' : ''}`}
+            onClick={() => handleOpenCreateManageClassModal()}
 
-      >
-        Thêm lớp
-      </Button>
-      <Upload {...propsUpload} className={`${getInfoCurrentUser?.type == userType.ministry ? 'hidden' : ''}`}>
-        <Button type="primary"
-          className="bg-blue-500" icon={<UploadOutlined />} onClick={selectClass}>Thêm mới sinh viên</Button>
-      </Upload>
-      <Table columns={columns} dataSource={lstTable ?? []} rowSelection={{
+          >
+            Thêm lớp
+          </Button>
+          <Upload {...propsUpload} className={`${getInfoCurrentUser?.type == userType.ministry ? 'hidden' : ''}`}>
+            <Button type="primary"
+              className="bg-blue-500" icon={<UploadOutlined />} onClick={selectClass}>Thêm mới sinh viên</Button>
+          </Upload>
+        </div>
+
+        <div className="mr-0 col-end-7 col-span-2 ...">
+          <Select placeholder='Chọn học kì' className="me-2"
+            options={[...optionSemester]} onChange={value => setSemeter(value)}
+          />
+          <Select placeholder='Chọn năm' className="me-2" onChange={(e) => {
+            setYear(e)
+            console.log(e)
+          }}>
+            {optionYears.map(year => (
+              <Select.Option key={year} value={year}>{year}</Select.Option>
+            ))}
+          </Select>
+          <Button
+            type="primary"
+            className={`bg-blue-500 me-2 ${(getInfoCurrentUser?.type == userType.teacher || getInfoCurrentUser?.type == userType.ministry) ? 'hidden' : ''}`}
+            onClick={() => handleFilter()}
+
+          >
+            Lọc
+          </Button>
+        </div>
+
+      </div>
+      <Table className="mt-5" columns={columns} dataSource={lstTable ?? []} rowSelection={{
         type: 'radio',
         ...rowSelection
       }} />
